@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.expenses }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.expenses }}{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:1rem;font-weight:600">{{ t.all_expenses }}</h2>
+<a href="{% url 'expense_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.add_expense }}</a>
+</div>
+<form method="get" class="filter-bar">
+<div class="filter-group"><label>{{ t.search }}</label><input type="text" name="search" class="form-control" placeholder="{{ t.description }}..." value="{{ current_filters.search|default:'' }}"></div>
+<div class="filter-group"><label>{{ t.category }}</label><select name="category" class="form-select"><option value="">All</option>{% for cat in categories %}<option value="{{ cat.pk }}">{{ cat.name }}</option>{% endfor %}</select></div>
+<div class="filter-group"><label>{{ t.payment_method }}</label><select name="payment_method" class="form-select"><option value="">All</option>{% for pm in payment_methods %}<option value="{{ pm.pk }}">{{ pm.name }}</option>{% endfor %}</select></div>
+<div class="filter-group"><label>{{ t.from }}</label><input type="date" name="date_from" class="form-control" value="{{ current_filters.date_from|default:'' }}"></div>
+<div class="filter-group"><label>{{ t.to }}</label><input type="date" name="date_to" class="form-control" value="{{ current_filters.date_to|default:'' }}"></div>
+<div class="filter-group"><label>&nbsp;</label>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer"><input type="checkbox" name="tax_deductible" value="1" {% if current_filters.tax_deductible == '1' %}checked{% endif %}> {{ t.tax_deductible }}</label>
+<button type="submit" class="btn btn-primary btn-sm">{{ t.filter }}</button>
+<a href="{% url 'expense_list' %}" class="btn btn-secondary btn-sm">{{ t.clear }}</a>
+</div></div>
+</form>
+<div class="card"><div class="card-body" style="padding:0">
+{% if expenses %}
+<div class="table-responsive"><table class="data-table">
+<thead><tr>
+<th><a href="?sort={% if current_filters.sort == 'date' %}-date{% else %}date{% endif %}">{{ t.date }}</a></th>
+<th>{{ t.category }}</th>
+<th><a href="?sort={% if current_filters.sort == 'amount' %}-amount{% else %}amount{% endif %}">{{ t.amount }}</a></th>
+<th>{{ t.payment }}</th><th>{{ t.description }}</th><th>{{ t.actions }}</th>
+</tr></thead>
+<tbody>{% for expense in expenses %}<tr>
+<td>{{ expense.date|date:"M d, Y" }}</td>
+<td>{% if expense.category %}<span class="category-badge"><span class="category-dot" style="background:{{ expense.category.color }}"></span> {{ expense.category.name }}</span>{% else %}&mdash;{% endif %}</td>
+<td class="amount expense">{{ currency_symbol }}{{ expense.amount|floatformat:2 }}</td>
+<td>{{ expense.payment_method.name|default:"&mdash;" }}</td>
+<td>{{ expense.description|truncatewords:8|default:"&mdash;" }}</td>
+<td class="actions"><a href="{% url 'expense_edit' expense.pk %}" title="{{ t.edit }}"><i class="fas fa-pen"></i></a> <a href="{% url 'expense_delete' expense.pk %}" title="{{ t.delete }}"><i class="fas fa-trash"></i></a></td>
+</tr>{% endfor %}</tbody></table></div>
+{% if expenses.has_other_pages %}<div style="padding:16px"><ul class="pagination">
+{% if expenses.has_previous %}<li><a href="?page={{ expenses.previous_page_number }}">&laquo;</a></li>{% endif %}
+{% for num in expenses.paginator.page_range %}<li class="{% if expenses.number == num %}active{% endif %}">{% if expenses.number == num %}<span>{{ num }}</span>{% else %}<a href="?page={{ num }}">{{ num }}</a>{% endif %}</li>{% endfor %}
+{% if expenses.has_next %}<li><a href="?page={{ expenses.next_page_number }}">&raquo;</a></li>{% endif %}
+</ul></div>{% endif %}
+{% else %}
+<div class="empty-state"><i class="fas fa-receipt"></i><p>{{ t.no_expenses_found }}</p><a href="{% url 'expense_create' %}" class="btn btn-primary btn-sm">{{ t.add_expense }}</a></div>
+{% endif %}
+</div></div>
+{% endblock %}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #333;
+            margin: 30px;
+        }
+
+        h1 {
+            color: #4361ee;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 15px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #4361ee;
+            padding-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 10px;
+            margin-bottom: 20px;
+        }
+
+        .summary-table {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .summary-table td {
+            padding: 8px 12px;
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .summary-card .label {
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .summary-card .value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .income {
+            color: #27ae60;
+        }
+
+        .expense {
+            color: #e74c3c;
+        }
+
+        .net {
+            color: #4361ee;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th {
+            background: #4361ee;
+            color: white;
+            padding: 6px 8px;
+            text-align: left;
+            font-size: 10px;
+        }
+
+        td {
+            padding: 5px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 10px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 9px;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        .cat-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Financial Report</h1>
+    <p class="subtitle">{{ date_from }} to {{ date_to }} &bull; {{ user.get_full_name }}</p>
+
+    <table class="summary-table">
+        <tr>
+            <td width="33%">
+                <div class="summary-card">
+                    <div class="label">Total Income</div>
+                    <div class="value income">{{ sym }}{{ total_income }}</div>
+                </div>
+            </td>
+            <td width="33%">
+                <div class="summary-card">
+                    <div class="label">Total Expenses</div>
+                    <div class="value expense">{{ sym }}{{ total_expenses }}</div>
+                </div>
+            </td>
+            <td width="33%">
+                <div class="summary-card">
+                    <div class="label">Net Savings</div>
+                    <div class="value net">{{ sym }}{{ net }}</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    {% if category_breakdown %}
+    <h2>Spending by Category</h2>
+    <table>
+        <tr>
+            <th>Category</th>
+            <th style="text-align:right">Amount</th>
+        </tr>
+        {% for cat in category_breakdown %}
+        <tr>
+            <td><span class="cat-dot" style="background:{{ cat.category__color }}"></span>{{
+                cat.category__name|default:"Uncategorized" }}</td>
+            <td style="text-align:right">{{ sym }}{{ cat.total }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {% if expenses %}
+    <h2>Expenses</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Payment</th>
+            <th style="text-align:right">Amount</th>
+        </tr>
+        {% for e in expenses %}
+        <tr>
+            <td>{{ e.date|date:"d/m/Y" }}</td>
+            <td>{{ e.category.name|default:"-" }}</td>
+            <td>{{ e.description|truncatechars:35 }}</td>
+            <td>{{ e.payment_method.name|default:"-" }}</td>
+            <td style="text-align:right">{{ sym }}{{ e.amount }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {% if incomes %}
+    <h2>Income</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Source</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th style="text-align:right">Amount</th>
+        </tr>
+        {% for i in incomes %}
+        <tr>
+            <td>{{ i.date|date:"d/m/Y" }}</td>
+            <td>{{ i.source|default:"-" }}</td>
+            <td>{{ i.category.name|default:"-" }}</td>
+            <td>{{ i.description|truncatechars:35 }}</td>
+            <td style="text-align:right">{{ sym }}{{ i.amount }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <div class="footer">
+        Expense Tracker &bull; Confidential Financial Report
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Disable Two-Factor Authentication{% endblock %}
+{% block page_title %}Disable 2FA{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-4 border-danger">
+            <div class="card-body text-center p-5">
+                <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                <h3 class="mt-3 text-danger">Disable 2FA</h3>
+                <p class="text-muted">Are you sure you want to disable two-factor authentication? This will make your account significantly less secure.</p>
+                
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg w-100 mb-2">Yes, Disable 2FA</button>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-secondary w-100">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

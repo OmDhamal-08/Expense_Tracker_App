@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.login|default:'Login' }} - Expense Tracker{% endblock %}
+{% block content_noauth %}
+<div class="auth-page"><div class="auth-card">
+<h1>{{ t.login|default:'Login' }}</h1>
+<form method="post">{% csrf_token %}
+{% if form.non_field_errors %}{% for error in form.non_field_errors %}<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
+{% for field in form %}
+{% if field.name != 'remember_me' %}
+<div class="form-group"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</div>
+{% else %}
+<div class="form-check" style="margin-bottom:16px">{{ field }} <label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+{% endif %}
+{% endfor %}
+<button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:10px">{{ t.login|default:'Login' }}</button>
+</form>
+<div style="text-align:center;margin-top:16px;font-size:0.85rem">
+<a href="{% url 'password_reset' %}">{{ t.forgot_password|default:'Forgot password?' }}</a>
+<span style="margin:0 8px;color:var(--text-secondary)">|</span>
+<a href="{% url 'register' %}">{{ t.create_account|default:'Create account' }}</a>
+</div></div></div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Expense Tracker - Manage Your Finances{% endblock %}
+
+{% block content_noauth %}
+<div class="auth-page">
+    <div class="auth-card" style="max-width:520px;text-align:center">
+        <h1 style="margin-bottom:8px"><i class="fas fa-wallet" style="color:var(--accent)"></i> Expense Tracker</h1>
+        <p style="color:var(--text-secondary);margin-bottom:32px">Track expenses, manage budgets, and achieve your
+            financial goals.</p>
+
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:300px;margin:0 auto">
+            <a href="{% url 'login' %}" class="btn btn-primary" style="justify-content:center;padding:10px">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="{% url 'register' %}" class="btn btn-secondary" style="justify-content:center;padding:10px">
+                <i class="fas fa-user-plus"></i> Create Account
+            </a>
+        </div>
+
+        <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center">
+            <div>
+                <i class="fas fa-chart-pie" style="font-size:1.5rem;color:var(--accent);margin-bottom:8px"></i>
+                <p style="font-size:0.8rem;color:var(--text-secondary)">Track Spending</p>
+            </div>
+            <div>
+                <i class="fas fa-bullseye" style="font-size:1.5rem;color:var(--success);margin-bottom:8px"></i>
+                <p style="font-size:0.8rem;color:var(--text-secondary)">Set Goals</p>
+            </div>
+            <div>
+                <i class="fas fa-chart-line" style="font-size:1.5rem;color:var(--info);margin-bottom:8px"></i>
+                <p style="font-size:0.8rem;color:var(--text-secondary)">View Reports</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="form-container"><div class="card"><div class="card-body">
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+<div class="form-row">
+<div class="form-group"><label for="{{ form.amount.id_for_label }}">{{ t.amount }}</label>{{ form.amount }}{% for error in form.amount.errors %}<ul class="errorlist"><li>{{ error }}</li></ul>{% endfor %}</div>
+<div class="form-group"><label for="{{ form.date.id_for_label }}">{{ t.date }}</label>{{ form.date }}</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label for="{{ form.category.id_for_label }}">{{ t.category }}</label>{{ form.category }}</div>
+<div class="form-group"><label for="{{ form.payment_method.id_for_label }}">{{ t.payment_method }}</label>{{ form.payment_method }}</div>
+</div>
+<div class="form-group"><label for="{{ form.description.id_for_label }}">{{ t.description }}</label>{{ form.description }}</div>
+<div class="form-row">
+<div class="form-group"><label for="{{ form.time.id_for_label }}">{{ t.time_optional }}</label>{{ form.time }}</div>
+<div class="form-group"><label for="{{ form.location.id_for_label }}">{{ t.location_optional }}</label>{{ form.location }}</div>
+</div>
+<div class="form-group"><label for="{{ form.receipt.id_for_label }}">{{ t.receipt_optional }}</label>{{ form.receipt }}</div>
+<div class="form-row">
+<div class="form-group"><label for="{{ form.recurrence.id_for_label }}">{{ t.recurrence }}</label>{{ form.recurrence }}</div>
+<div class="form-group"><label for="{{ form.recurrence_end_date.id_for_label }}">{{ t.recurrence_end_date }}</label>{{ form.recurrence_end_date }}</div>
+</div>
+<div class="form-check" style="margin-top:8px">{{ form.is_tax_deductible }} <label for="{{ form.is_tax_deductible.id_for_label }}">{{ t.tax_deductible }}</label></div>
+<div class="form-actions"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ t.save }}</button> <a href="{% url 'expense_list' %}" class="btn btn-secondary">{{ t.cancel }}</a></div>
+</form></div></div></div>
+{% endblock %}

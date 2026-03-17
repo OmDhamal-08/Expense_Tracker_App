@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Account - Expense Tracker{% endblock %}
+{% block page_title %}Delete Account{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="card">
+        <div class="card-header" style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i> Delete Account
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <strong>Warning!</strong> This action cannot be undone. All your data will be permanently deleted
+                including your profile, expenses, budgets, and goals.
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="password">Enter your password to confirm:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete My
+                        Account</button>
+                    <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

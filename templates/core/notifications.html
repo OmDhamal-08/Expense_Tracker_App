@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.notifications }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.notifications }}{% endblock %}
+{% block content %}
+{% if notifications %}
+<div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+<form method="post" action="{% url 'notification_clear' %}">{% csrf_token %}<button type="submit" class="btn btn-sm btn-secondary"><i class="fas fa-trash"></i> {{ t.clear_all }}</button></form>
+</div>
+<div class="card"><div class="card-body" style="padding:0">
+{% for notif in notifications %}
+<div class="notification-item {% if not notif.is_read %}unread{% endif %}">
+<div class="notif-icon" style="background:{% if 'exceeded' in notif.type %}#f8d7da;color:#721c24{% elif 'warning' in notif.type %}#fff3cd;color:#856404{% elif 'completed' in notif.type %}#d4edda;color:#155724{% else %}#d1ecf1;color:#0c5460{% endif %}"><i class="fas {% if 'budget' in notif.type %}fa-chart-pie{% elif 'goal' in notif.type %}fa-bullseye{% else %}fa-bell{% endif %}"></i></div>
+<div class="notif-content"><div class="notif-title">{{ notif.title }}</div><div class="notif-message">{{ notif.message }}</div><div class="notif-time">{{ notif.created_at|timesince }} {{ t.ago }}</div></div>
+{% if not notif.is_read %}<form method="post" action="{% url 'notification_mark_read' notif.pk %}">{% csrf_token %}<button type="submit" class="btn btn-sm btn-secondary" title="{{ t.mark_as_read }}"><i class="fas fa-check"></i></button></form>{% endif %}
+</div>{% endfor %}
+</div></div>
+{% else %}
+<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bell-slash"></i><p>{{ t.no_notifications }}</p></div></div></div>
+{% endif %}
+{% endblock %}

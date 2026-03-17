@@ -1,0 +1,16 @@
+Hello {{ user.first_name|default:user.username }},
+
+Here is your weekly summary for the period {{ week_start }} to {{ week_end }}:
+
+Total Income: {{ total_income }}
+Total Expenses: {{ total_expenses }}
+Net Savings: {{ net }}
+
+Top spending categories this week:
+{% for cp in top_categories %}
+- {{ cp.category__name|default:"Uncategorized" }}: {{ cp.total }}
+{% empty %}
+No expenses recorded this week.
+{% endfor %}
+
+Log in to view more details in your dashboard.

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.dashboard }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.dashboard }}{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:1rem;font-weight:600">{{ t.dashboard }}</h2>
+<div style="display:flex;gap:8px">
+<a href="{% url 'expense_create' %}" class="btn btn-primary btn-sm"><i class="fas fa-minus-circle"></i> {{ t.add_expense }}</a>
+<a href="{% url 'income_create' %}" class="btn btn-success btn-sm"><i class="fas fa-plus-circle"></i> {{ t.add_income }}</a>
+</div></div>
+
+{% if onboarding %}
+<div id="onboarding-card" class="card" style="margin-bottom:24px;border-left:4px solid var(--accent);position:relative">
+    <button onclick="dismissOnboarding()" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem">&times;</button>
+    <div class="card-header" style="border:none;padding-bottom:0">🚀 Getting Started ({{ onboarding.percent }}%)</div>
+    <div class="card-body">
+        <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:16px">Complete these steps to master your finances!</p>
+        <div class="onboarding-steps">
+            {% for step in onboarding.steps %}
+            <div style="display:flex;align-items:center;margin-bottom:12px;{% if step.done %}opacity:0.6{% endif %}">
+                <div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-right:12px;background:{% if step.done %}#28a745{% else %}#e9cece33{% endif %};color:{% if step.done %}white{% else %}var(--text-muted){% endif %};border:1px solid {% if step.done %}#28a745{% else %}#ddd{% endif %}">
+                    {% if step.done %}<i class="fas fa-check" style="font-size:0.75rem"></i>{% else %}{{ forloop.counter }}{% endif %}
+                </div>
+                <span style="font-size:0.95rem;{% if step.done %}text-decoration:line-through{% endif %}">{{ step.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="progress-bar-container" style="height:8px;margin-top:8px">
+            <div class="progress-bar-fill" style="width:{{ onboarding.percent }}%;background:var(--accent)"></div>
+        </div>
+        {% if onboarding.completed %}
+        <div style="margin-top:16px;color:#28a745;font-weight:600;font-size:0.9rem">
+            ✨ You're all set! You can now dismiss this guide.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-label">{{ t.income_this_month }}</div>
+<div class="stat-value positive">{{ currency_symbol }}{{ monthly_income|floatformat:2 }}</div>
+<small style="color:{% if income_change >= 0 %}#28a745{% else %}#dc3545{% endif %};font-size:0.75rem">{% if income_change > 0 %}&uarr;{% elif income_change < 0 %}&darr;{% endif %} {{ income_change }}% {{ t.vs_last_month }}</small>
+</div>
+<div class="stat-card">
+<div class="stat-label">{{ t.expenses_this_month }}</div>
+<div class="stat-value negative">{{ currency_symbol }}{{ monthly_expenses|floatformat:2 }}</div>
+<small style="color:{% if expense_change > 0 %}#dc3545{% else %}#28a745{% endif %};font-size:0.75rem">{% if expense_change > 0 %}&uarr;{% elif expense_change < 0 %}&darr;{% endif %} {{ expense_change }}% {{ t.vs_last_month }}</small>
+</div>
+<div class="stat-card">
+<div class="stat-label">{{ t.balance }}</div>
+<div class="stat-value {% if balance >= 0 %}positive{% else %}negative{% endif %}">{{ currency_symbol }}{{ balance|floatformat:2 }}</div>
+</div></div>
+<div class="chart-grid">
+<div class="card">
+<div class="card-header">{{ t.spending_by_category }}</div>
+<div class="card-body">
+{% if category_spending %}
+<div class="chart-container"><canvas id="categoryChart"></canvas></div>
+{% else %}
+<div class="empty-state"><p>{{ t.no_expenses_this_month }}</p></div>
+{% endif %}
+</div></div>
+<div class="card">
+<div class="card-header">{{ t.income_vs_expenses_6m }}</div>
+<div class="card-body"><div class="chart-container"><canvas id="trendChart"></canvas></div></div>
+</div></div>
+<div class="chart-grid">
+<div class="card">
+<div class="card-header">{{ t.recent_expenses }} <a href="{% url 'expense_list' %}" class="btn btn-sm btn-secondary">{{ t.view_all }}</a></div>
+<div class="card-body" style="padding:0">
+{% if recent_expenses %}
+<table class="data-table"><thead><tr><th>{{ t.date }}</th><th>{{ t.category }}</th><th>{{ t.amount }}</th></tr></thead>
+<tbody>{% for e in recent_expenses %}<tr>
+<td>{{ e.date|date:"M d" }}</td>
+<td>{% if e.category %}<span class="category-badge"><span class="category-dot" style="background:{{ e.category.color }}"></span> {{ e.category.name }}</span>{% else %}&mdash;{% endif %}</td>
+<td class="amount expense">{{ currency_symbol }}{{ e.amount|floatformat:2 }}</td>
+</tr>{% endfor %}</tbody></table>
+{% else %}<div class="empty-state"><p>{{ t.no_recent_expenses }}</p></div>{% endif %}
+</div></div>
+<div class="card">
+<div class="card-header">{{ t.recent_income }} <a href="{% url 'income_list' %}" class="btn btn-sm btn-secondary">{{ t.view_all }}</a></div>
+<div class="card-body" style="padding:0">
+{% if recent_income %}
+<table class="data-table"><thead><tr><th>{{ t.date }}</th><th>{{ t.source }}</th><th>{{ t.amount }}</th></tr></thead>
+<tbody>{% for i in recent_income %}<tr>
+<td>{{ i.date|date:"M d" }}</td>
+<td>{{ i.source|default:i.category }}</td>
+<td class="amount income">{{ currency_symbol }}{{ i.amount|floatformat:2 }}</td>
+</tr>{% endfor %}</tbody></table>
+{% else %}<div class="empty-state"><p>{{ t.no_recent_income }}</p></div>{% endif %}
+</div></div></div>
+{% if active_budgets %}
+<div class="card" style="margin-top:16px">
+<div class="card-header">{{ t.budgets }} <a href="{% url 'budget_list' %}" class="btn btn-sm btn-secondary">{{ t.view_all }}</a></div>
+<div class="card-body">
+{% for budget in active_budgets %}
+<div style="margin-bottom:16px">
+<div style="display:flex;justify-content:space-between;font-size:0.85rem">
+<span>{{ budget.category.name }}</span>
+<span>{{ currency_symbol }}{{ budget.spent_amount|floatformat:2 }} / {{ currency_symbol }}{{ budget.amount|floatformat:2 }}</span>
+</div>
+<div class="progress-bar-container"><div class="progress-bar-fill" style="width:{{ budget.spent_percentage }}%;background:{% if budget.is_over_budget %}var(--danger){% elif budget.is_near_limit %}var(--warning){% else %}var(--accent){% endif %}"></div></div>
+</div>{% endfor %}
+</div></div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script>
+{% if category_spending %}
+new Chart(document.getElementById('categoryChart'),{type:'doughnut',data:{labels:[{% for c in category_spending %}'{{ c.category__name }}'{% if not forloop.last %},{% endif %}{% endfor %}],datasets:[{data:[{% for c in category_spending %}{{ c.total }}{% if not forloop.last %},{% endif %}{% endfor %}],backgroundColor:[{% for c in category_spending %}'{{ c.category__color|default:"#6c757d" }}'{% if not forloop.last %},{% endif %}{% endfor %}],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{padding:16,font:{size:12}}}},onClick:(e,activeElements)=>{if(activeElements.length>0){const index=activeElements[0].index;const label=e.chart.data.labels[index];window.location.href="{% url 'expense_list' %}?search="+encodeURIComponent(label)}}}});
+{% endif %}
+var trendData={{ monthly_data|safe }};
+new Chart(document.getElementById('trendChart'),{type:'line',data:{labels:trendData.map(function(d){return d.month}),datasets:[{label:'{{ t.income }}',data:trendData.map(function(d){return d.income}),borderColor:'#28a745',backgroundColor:'rgba(40,167,69,0.1)',fill:true,tension:0.3},{label:'{{ t.expenses }}',data:trendData.map(function(d){return d.expenses}),borderColor:'#dc3545',backgroundColor:'rgba(220,53,69,0.1)',fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.05)'}},x:{grid:{display:false}}}}});
+
+function dismissOnboarding() {
+    fetch("{% url 'onboarding_dismiss' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        }
+    }).then(response => {
+        if (response.ok) {
+            document.getElementById('onboarding-card').style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

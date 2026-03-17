@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.budgets }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.budgets }}{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:1rem;font-weight:600">{{ t.budget_management }}</h2>
+<a href="{% url 'budget_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.create_budget }}</a>
+</div>
+{% if budgets %}
+<div class="item-cards">{% for budget in budgets %}
+<div class="item-card">
+<div class="item-header"><div>
+<div class="item-title"><span class="category-badge"><span class="category-dot" style="background:{{ budget.category.color }}"></span> {{ budget.category.name }}</span></div>
+<div class="item-meta">{{ budget.get_period_display }} {{ t.budget }}</div>
+</div><div>
+{% if budget.is_over_budget %}<span class="badge badge-danger">{{ t.over_budget }}</span>{% elif budget.is_near_limit %}<span class="badge badge-warning">{{ t.near_limit }}</span>{% else %}<span class="badge badge-success">{{ t.on_track }}</span>{% endif %}
+</div></div>
+<div class="item-amounts"><span>{{ t.spent }}: {{ budget.spent_amount|floatformat:2 }}</span><span>{{ t.budget }}: {{ budget.amount|floatformat:2 }}</span></div>
+<div class="progress-bar-container"><div class="progress-bar-fill" style="width:{{ budget.spent_percentage }}%;background:{% if budget.is_over_budget %}var(--danger){% elif budget.is_near_limit %}var(--warning){% else %}var(--success){% endif %}"></div></div>
+<div style="font-size:0.8rem;color:var(--text-secondary);text-align:right">{{ budget.spent_percentage }}%</div>
+<div class="item-footer"><a href="{% url 'budget_edit' budget.pk %}" class="btn btn-sm btn-secondary"><i class="fas fa-pen"></i> {{ t.edit }}</a> <a href="{% url 'budget_delete' budget.pk %}" class="btn btn-sm btn-secondary"><i class="fas fa-trash"></i> {{ t.delete }}</a></div>
+</div>{% endfor %}</div>
+{% else %}
+<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-chart-pie"></i><p>{{ t.no_budgets_yet }}</p><a href="{% url 'budget_create' %}" class="btn btn-primary btn-sm">{{ t.create_budget }}</a></div></div></div>
+{% endif %}
+{% endblock %}

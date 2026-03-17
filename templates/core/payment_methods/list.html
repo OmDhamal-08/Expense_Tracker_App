@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.payment_methods }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.payment_methods }}{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:1rem;font-weight:600">{{ t.manage_payment_methods }}</h2>
+<a href="{% url 'payment_method_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.add_method }}</a>
+</div>
+<div class="card"><div class="card-body" style="padding:0">
+{% if methods %}
+<table class="data-table"><thead><tr><th>{{ t.icon }}</th><th>{{ t.name }}</th><th>{{ t.default }}</th><th>{{ t.type }}</th><th>{{ t.actions }}</th></tr></thead>
+<tbody>{% for m in methods %}<tr>
+<td><i class="fas {{ m.icon }}"></i></td><td>{{ m.name }}</td>
+<td>{% if m.is_default %}<span class="badge badge-success">{{ t.default }}</span>{% endif %}</td>
+<td>{% if m.user %}{{ t.custom }}{% else %}<span class="badge badge-secondary">{{ t.default }}</span>{% endif %}</td>
+<td class="actions">{% if m.user %}<a href="{% url 'payment_method_edit' m.pk %}" title="{{ t.edit }}"><i class="fas fa-pen"></i></a> <a href="{% url 'payment_method_delete' m.pk %}" title="{{ t.delete }}"><i class="fas fa-trash"></i></a>{% else %}&mdash;{% endif %}</td>
+</tr>{% endfor %}</tbody></table>
+{% else %}
+<div class="empty-state"><i class="fas fa-credit-card"></i><p>{{ t.no_payment_methods }}</p><a href="{% url 'payment_method_create' %}" class="btn btn-primary btn-sm">{{ t.add_one }}</a></div>
+{% endif %}
+</div></div>
+{% endblock %}

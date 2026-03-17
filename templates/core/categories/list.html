@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.categories }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.categories }}{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:1rem;font-weight:600">{{ t.manage_categories }}</h2>
+<a href="{% url 'category_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.add_category }}</a>
+</div>
+<div class="card" style="margin-bottom:24px"><div class="card-header">{{ t.expense_categories }}</div>
+<div class="card-body" style="padding:0">
+{% if expense_categories %}
+<table class="data-table"><thead><tr><th>{{ t.color }}</th><th>{{ t.name }}</th><th>{{ t.icon }}</th><th>{{ t.type }}</th><th>{{ t.actions }}</th></tr></thead>
+<tbody>{% for cat in expense_categories %}<tr>
+<td><span class="category-dot" style="background:{{ cat.color }}"></span></td>
+<td>{{ cat.name }}{% if not cat.user %} <small style="color:var(--text-secondary)">({{ t.default }})</small>{% endif %}</td>
+<td><i class="fas {{ cat.icon }}"></i></td><td>{{ cat.get_type_display }}</td>
+<td class="actions">{% if cat.user %}<a href="{% url 'category_edit' cat.pk %}" title="{{ t.edit }}"><i class="fas fa-pen"></i></a> <a href="{% url 'category_delete' cat.pk %}" title="{{ t.delete }}"><i class="fas fa-trash"></i></a>{% else %}&mdash;{% endif %}</td>
+</tr>{% endfor %}</tbody></table>
+{% else %}<div class="empty-state"><p>{{ t.no_expense_categories }}</p></div>{% endif %}
+</div></div>
+<div class="card"><div class="card-header">{{ t.income_categories }}</div>
+<div class="card-body" style="padding:0">
+{% if income_categories %}
+<table class="data-table"><thead><tr><th>{{ t.color }}</th><th>{{ t.name }}</th><th>{{ t.icon }}</th><th>{{ t.type }}</th><th>{{ t.actions }}</th></tr></thead>
+<tbody>{% for cat in income_categories %}<tr>
+<td><span class="category-dot" style="background:{{ cat.color }}"></span></td>
+<td>{{ cat.name }}{% if not cat.user %} <small style="color:var(--text-secondary)">({{ t.default }})</small>{% endif %}</td>
+<td><i class="fas {{ cat.icon }}"></i></td><td>{{ cat.get_type_display }}</td>
+<td class="actions">{% if cat.user %}<a href="{% url 'category_edit' cat.pk %}" title="{{ t.edit }}"><i class="fas fa-pen"></i></a> <a href="{% url 'category_delete' cat.pk %}" title="{{ t.delete }}"><i class="fas fa-trash"></i></a>{% else %}&mdash;{% endif %}</td>
+</tr>{% endfor %}</tbody></table>
+{% else %}<div class="empty-state"><p>{{ t.no_income_categories }}</p></div>{% endif %}
+</div></div>
+{% endblock %}

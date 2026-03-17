@@ -1,0 +1,15 @@
+Hello {{ user.first_name|default:user.username }},
+
+Great news from your Expense Tracker!
+
+{% if milestone == 'completed' %}
+Congratulations! You have successfully reached your financial goal: "{{ goal.name }}".
+Target Date: {{ goal.target_date }}
+Target Amount: {{ goal.target_amount }}
+Current Saved: {{ goal.current_amount }}
+{% else %}
+You've hit a milestone! You are now {{ milestone }} of the way to achieving your goal: "{{ goal.name }}".
+Target Amount: {{ goal.target_amount }}
+Current Saved: {{ goal.current_amount }}
+Keep up the great work!
+{% endif %}

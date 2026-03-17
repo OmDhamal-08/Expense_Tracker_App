@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.income }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.income }}{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:1rem;font-weight:600">{{ t.all_income }}</h2>
+<a href="{% url 'income_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.add_income }}</a>
+</div>
+<form method="get" class="filter-bar">
+<div class="filter-group"><label>{{ t.search }}</label><input type="text" name="search" class="form-control" placeholder="{{ t.source }}..." value="{{ current_filters.search|default:'' }}"></div>
+<div class="filter-group"><label>{{ t.category }}</label><select name="category" class="form-select"><option value="">All</option>{% for cat in categories %}<option value="{{ cat.pk }}">{{ cat.name }}</option>{% endfor %}</select></div>
+<div class="filter-group"><label>{{ t.from }}</label><input type="date" name="date_from" class="form-control" value="{{ current_filters.date_from|default:'' }}"></div>
+<div class="filter-group"><label>{{ t.to }}</label><input type="date" name="date_to" class="form-control" value="{{ current_filters.date_to|default:'' }}"></div>
+<div class="filter-group"><label>&nbsp;</label><div style="display:flex;gap:8px">
+<button type="submit" class="btn btn-primary btn-sm">{{ t.filter }}</button>
+<a href="{% url 'income_list' %}" class="btn btn-secondary btn-sm">{{ t.clear }}</a>
+</div></div></form>
+<div class="card"><div class="card-body" style="padding:0">
+{% if incomes %}
+<div class="table-responsive"><table class="data-table">
+<thead><tr>
+<th><a href="?sort={% if current_filters.sort == 'date' %}-date{% else %}date{% endif %}">{{ t.date }}</a></th>
+<th>{{ t.source }}</th><th>{{ t.category }}</th>
+<th><a href="?sort={% if current_filters.sort == 'amount' %}-amount{% else %}amount{% endif %}">{{ t.amount }}</a></th>
+<th>{{ t.description }}</th><th>{{ t.actions }}</th>
+</tr></thead>
+<tbody>{% for income in incomes %}<tr>
+<td>{{ income.date|date:"M d, Y" }}</td>
+<td>{{ income.source|default:"&mdash;" }}</td>
+<td>{% if income.category %}<span class="category-badge"><span class="category-dot" style="background:{{ income.category.color }}"></span> {{ income.category.name }}</span>{% else %}&mdash;{% endif %}</td>
+<td class="amount income">{{ currency_symbol }}{{ income.amount|floatformat:2 }}</td>
+<td>{{ income.description|truncatewords:8|default:"&mdash;" }}</td>
+<td class="actions"><a href="{% url 'income_edit' income.pk %}" title="{{ t.edit }}"><i class="fas fa-pen"></i></a> <a href="{% url 'income_delete' income.pk %}" title="{{ t.delete }}"><i class="fas fa-trash"></i></a></td>
+</tr>{% endfor %}</tbody></table></div>
+{% if incomes.has_other_pages %}<div style="padding:16px"><ul class="pagination">
+{% if incomes.has_previous %}<li><a href="?page={{ incomes.previous_page_number }}">&laquo;</a></li>{% endif %}
+{% for num in incomes.paginator.page_range %}<li class="{% if incomes.number == num %}active{% endif %}">{% if incomes.number == num %}<span>{{ num }}</span>{% else %}<a href="?page={{ num }}">{{ num }}</a>{% endif %}</li>{% endfor %}
+{% if incomes.has_next %}<li><a href="?page={{ incomes.next_page_number }}">&raquo;</a></li>{% endif %}
+</ul></div>{% endif %}
+{% else %}
+<div class="empty-state"><i class="fas fa-hand-holding-usd"></i><p>{{ t.no_income_found }}</p><a href="{% url 'income_create' %}" class="btn btn-primary btn-sm">{{ t.add_income }}</a></div>
+{% endif %}
+</div></div>
+{% endblock %}

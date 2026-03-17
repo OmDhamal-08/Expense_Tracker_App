@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Expense Tracker{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.category.id_for_label }}">Category</label>
+                        {{ form.category }}
+                        {% for error in form.category.errors %}<ul class="errorlist">
+                            <li>{{ error }}</li>
+                        </ul>{% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.amount.id_for_label }}">Budget Amount</label>
+                        {{ form.amount }}
+                        {% for error in form.amount.errors %}<ul class="errorlist">
+                            <li>{{ error }}</li>
+                        </ul>{% endfor %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.period.id_for_label }}">Period</label>
+                        {{ form.period }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.start_date.id_for_label }}">Start Date</label>
+                        {{ form.start_date }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.alert_threshold.id_for_label }}">Alert Threshold (%)</label>
+                    {{ form.alert_threshold }}
+                    <span class="helptext">Get notified when spending reaches this percentage</span>
+                </div>
+                <div class="form-check">
+                    {{ form.rollover }}
+                    <label for="{{ form.rollover.id_for_label }}">Roll over unused budget to next period</label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <a href="{% url 'budget_list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

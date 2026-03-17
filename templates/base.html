@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ current_lang|default:'en' }}" data-theme="{{ request.user.theme|default:'light' }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ t.app_name }}{% endblock %}</title>
+    <meta name="description" content="Track your expenses, manage budgets, and achieve financial goals.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+    <div class="app-wrapper">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-wallet"></i> {{ t.app_name }}</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}"
+                    class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-th-large"></i> {{ t.dashboard }}
+                </a>
+
+                <div class="nav-section">{{ t.transactions }}</div>
+                <a href="{% url 'expense_list' %}"
+                    class="{% if 'expense' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-arrow-up"></i> {{ t.expenses }}
+                </a>
+                <a href="{% url 'income_list' %}"
+                    class="{% if 'income' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-arrow-down"></i> {{ t.income }}
+                </a>
+
+                <div class="nav-section">{{ t.manage }}</div>
+                <a href="{% url 'category_list' %}"
+                    class="{% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-folder"></i> {{ t.categories }}
+                </a>
+                <a href="{% url 'payment_method_list' %}"
+                    class="{% if 'payment_method' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-credit-card"></i> {{ t.payment_methods }}
+                </a>
+
+                <div class="nav-section">{{ t.planning }}</div>
+                <a href="{% url 'budget_list' %}"
+                    class="{% if 'budget' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i> {{ t.budgets }}
+                </a>
+                <a href="{% url 'goal_list' %}"
+                    class="{% if 'goal' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-bullseye"></i> {{ t.goals }}
+                </a>
+
+                <div class="nav-section">{{ t.insights }}</div>
+                <a href="{% url 'reports' %}"
+                    class="{% if 'report' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-chart-bar"></i> {{ t.reports }}
+                </a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">{% block page_title %}{{ t.dashboard }}{% endblock %}</h1>
+                </div>
+                <div class="navbar-right">
+                    <a href="{% url 'notification_list' %}" class="notification-link">
+                        <i class="fas fa-bell"></i>
+                        {% if unread_notifications %}
+                        <span class="notification-badge">{{ unread_notifications }}</span>
+                        {% endif %}
+                    </a>
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="user-menu">
+                        <button class="user-menu-btn" onclick="toggleUserMenu()">
+                            <i class="fas fa-user-circle"></i>
+                            {{ user.first_name|default:user.email }}
+                            <i class="fas fa-chevron-down" style="font-size:0.65rem"></i>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="{% url 'profile' %}"><i class="fas fa-user"></i> {{ t.profile }}</a>
+                            <a href="{% url 'export_data' %}"><i class="fas fa-download"></i> {{ t.export_data }}</a>
+                            <div class="divider"></div>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit"><i class="fas fa-sign-out-alt"></i> {{ t.logout }}</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                    <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% block content %}{% endblock %}
+            </div>
+
+            <footer class="site-footer">
+                &copy; {{ current_year }} {{ t.app_name }}
+            </footer>
+        </div>
+    </div>
+    {% else %}
+    <div class="page-content">
+        {% if messages %}
+        <div style="max-width:420px;margin:0 auto;padding:16px;">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+                <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content_noauth %}{% endblock %}
+    </div>
+    {% endif %}
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+
+            // Perists theme to server if logged in
+            fetch('/accounts/theme/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({theme: next})
+            }).catch(e => console.error(e));
+        }
+
+        function toggleUserMenu() {
+            document.getElementById('userDropdown').classList.toggle('show');
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.user-menu')) {
+                document.getElementById('userDropdown')?.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            // Do not trigger if typing in an input/textarea
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+
+            switch(e.key.toLowerCase()) {
+                case 'n':
+                    e.preventDefault();
+                    window.location.href = "{% url 'expense_create' %}";
+                    break;
+                case 'd':
+                    e.preventDefault();
+                    window.location.href = "{% url 'dashboard' %}";
+                    break;
+                case 'b':
+                    e.preventDefault();
+                    window.location.href = "{% url 'budget_list' %}";
+                    break;
+                case 'r':
+                    e.preventDefault();
+                    window.location.href = "{% url 'reports' %}";
+                    break;
+                case '/':
+                    e.preventDefault();
+                    const searchBox = document.querySelector('input[name="search"]');
+                    if(searchBox) searchBox.focus();
+                    break;
+            }
+        });
+
+        (function () {
+            const saved = localStorage.getItem('theme');
+            if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+            setTimeout(function () {
+                document.querySelectorAll('.alert').forEach(function (el) {
+                    el.remove();
+                });
+            }, 5000);
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

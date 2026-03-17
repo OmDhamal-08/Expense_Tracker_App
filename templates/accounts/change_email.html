@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Change Email - Expense Tracker{% endblock %}
+{% block page_title %}Change Email{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="card">
+        <div class="card-header"><i class="fas fa-envelope"></i> Change Email Address</div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="new_email">New Email Address</label>
+                    <input type="email" class="form-control" id="new_email" name="new_email" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_email">Confirm New Email</label>
+                    <input type="email" class="form-control" id="confirm_email" name="confirm_email" required>
+                </div>
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" class="form-control" id="current_password" name="current_password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-envelope"></i> Change Email</button>
+                    <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.reports }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.reports }}{% endblock %}
+{% block content %}
+<form method="get" class="filter-bar" style="margin-bottom:24px">
+<div class="filter-group"><label>{{ t.from }}</label><input type="date" name="date_from" class="form-control" value="{{ date_from }}"></div>
+<div class="filter-group"><label>{{ t.to }}</label><input type="date" name="date_to" class="form-control" value="{{ date_to }}"></div>
+<div class="filter-group"><label>&nbsp;</label><div style="display:flex;gap:8px;flex-wrap:wrap">
+<button type="submit" class="btn btn-primary btn-sm">{{ t.generate }}</button>
+<a href="{% url 'export_csv' %}?date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-secondary btn-sm"><i class="fas fa-file-csv"></i> CSV</a>
+<a href="{% url 'export_json' %}?date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-secondary btn-sm"><i class="fas fa-file-code"></i> JSON</a>
+<a href="{% url 'export_pdf' %}?date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-secondary btn-sm"><i class="fas fa-file-pdf"></i> PDF</a>
+</div></div></form>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">{{ t.total_income }}</div><div class="stat-value positive">{{ currency_symbol }}{{ total_income|floatformat:2 }}</div></div>
+<div class="stat-card"><div class="stat-label">{{ t.total_expenses }}</div><div class="stat-value negative">{{ currency_symbol }}{{ total_expenses|floatformat:2 }}</div></div>
+<div class="stat-card"><div class="stat-label">{{ t.net }}</div><div class="stat-value {% if net >= 0 %}positive{% else %}negative{% endif %}">{{ currency_symbol }}{{ net|floatformat:2 }}</div></div>
+<!-- #9 Savings Rate -->
+<div class="stat-card"><div class="stat-label">Savings Rate</div><div class="stat-value {% if savings_rate >= 20 %}text-success{% elif savings_rate >= 0 %}text-warning{% else %}text-danger{% endif %}">{{ savings_rate }}%</div></div>
+</div>
+<div class="chart-grid">
+<div class="card"><div class="card-header">{{ t.spending_by_category }}</div><div class="card-body">
+{% if category_breakdown %}<div class="chart-container"><canvas id="categoryBreakdown"></canvas></div>
+{% else %}<div class="empty-state"><p>{{ t.no_expense_data }}</p></div>{% endif %}
+</div></div>
+<div class="card"><div class="card-header">{{ t.budget_vs_actual }}</div><div class="card-body">
+{% if budget_comparison %}<div class="chart-container"><canvas id="budgetChart"></canvas></div>
+{% else %}<div class="empty-state"><p>{{ t.no_budgets_set }}</p></div>{% endif %}
+</div></div></div>
+
+<!-- #9 Advanced Analytics: 12-Month Trend Chart -->
+<div class="card mt-4"><div class="card-header">12-Month Income vs Expense Trend & Savings</div><div class="card-body">
+<div class="chart-container" style="height: 300px;"><canvas id="twelveMonthTrend"></canvas></div>
+</div></div>
+{% if category_breakdown %}
+<div class="card" style="margin-top:16px"><div class="card-header">{{ t.category_breakdown }}</div>
+<div class="card-body" style="padding:0"><table class="data-table">
+<thead><tr><th>{{ t.category }}</th><th>{{ t.amount }}</th><th>{{ t.pct_of_total }}</th></tr></thead>
+<tbody>{% for item in category_breakdown %}<tr>
+<td><span class="category-badge"><span class="category-dot" style="background:{{ item.category__color|default:'#6c757d' }}"></span> {{ item.category__name|default:"Uncategorized" }}</span></td>
+<td class="amount expense">{{ currency_symbol }}{{ item.total|floatformat:2 }}</td>
+<td>{% widthratio item.total total_expenses 100 %}%</td>
+</tr>{% endfor %}</tbody></table></div></div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script>
+{% if category_breakdown %}
+new Chart(document.getElementById('categoryBreakdown'),{type:'doughnut',data:{labels:[{% for c in category_breakdown %}'{{ c.category__name|default:"Other" }}'{% if not forloop.last %},{% endif %}{% endfor %}],datasets:[{data:[{% for c in category_breakdown %}{{ c.total }}{% if not forloop.last %},{% endif %}{% endfor %}],backgroundColor:[{% for c in category_breakdown %}'{{ c.category__color|default:"#6c757d" }}'{% if not forloop.last %},{% endif %}{% endfor %}],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{padding:12,font:{size:11}}}}}});
+{% endif %}
+{% if budget_comparison %}
+var bd={{ budget_comparison|safe }};
+new Chart(document.getElementById('budgetChart'),{type:'bar',data:{labels:bd.map(function(d){return d.category}),datasets:[{label:'{{ t.budget }}',data:bd.map(function(d){return d.budgeted}),backgroundColor:'rgba(67,97,238,0.3)',borderColor:'#4361ee',borderWidth:1},{label:'{{ t.spent }}',data:bd.map(function(d){return d.spent}),backgroundColor:bd.map(function(d){return d.spent>d.budgeted?'rgba(220,53,69,0.3)':'rgba(40,167,69,0.3)'}),borderColor:bd.map(function(d){return d.spent>d.budgeted?'#dc3545':'#28a745'}),borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}});
+{% endif %}
+{% if twelve_month_data %}
+var tmd={{ twelve_month_data|safe }};
+new Chart(document.getElementById('twelveMonthTrend'),{
+    type:'bar',
+    data: {
+        labels: tmd.map(d => d.month),
+        datasets: [
+            {label: 'Income', data: tmd.map(d => d.income), backgroundColor: 'rgba(40,167,69,0.8)'},
+            {label: 'Expenses', data: tmd.map(d => d.expenses), backgroundColor: 'rgba(220,53,69,0.8)'},
+            {label: 'Savings', data: tmd.map(d => d.savings), type: 'line', borderColor: '#4361ee', borderWidth: 2, fill: false, tension: 0.1}
+        ]
+    },
+    options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}, scales:{y:{beginAtZero:true}}}
+});
+{% endif %}
+</script>
+{% endblock %}

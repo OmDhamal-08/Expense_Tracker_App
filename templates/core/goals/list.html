@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.goals }} - {{ t.app_name }}{% endblock %}
+{% block page_title %}{{ t.financial_goals }}{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:1rem;font-weight:600">{{ t.your_goals }}</h2>
+<a href="{% url 'goal_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> {{ t.create_goal }}</a>
+</div>
+{% if goals %}
+<div class="item-cards">{% for goal in goals %}
+<div class="item-card">
+<div class="item-header"><div>
+<div class="item-title">{{ goal.name }}</div>
+<div class="item-meta">{{ goal.get_goal_type_display }} &middot; {{ goal.get_priority_display }} {{ t.priority }}</div>
+</div><div>
+{% if goal.status == 'completed' %}<span class="badge badge-success">{{ t.completed }}</span>{% elif goal.status == 'in_progress' %}<span class="badge badge-info">{{ t.in_progress }}</span>{% elif goal.status == 'on_hold' %}<span class="badge badge-warning">{{ t.on_hold }}</span>{% else %}<span class="badge badge-secondary">{{ t.not_started }}</span>{% endif %}
+</div></div>
+<div class="item-amounts"><span>{{ t.current }}: {{ goal.current_amount|floatformat:2 }}</span><span>{{ t.target }}: {{ goal.target_amount|floatformat:2 }}</span></div>
+<div class="progress-bar-container"><div class="progress-bar-fill" style="width:{{ goal.progress_percentage }}%;background:{% if goal.progress_percentage >= 100 %}var(--success){% elif goal.progress_percentage >= 50 %}var(--accent){% else %}var(--warning){% endif %}"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-secondary)"><span>{{ goal.progress_percentage }}% {{ t.complete }}</span>{% if goal.deadline %}<span>{{ t.deadline }}: {{ goal.deadline|date:"M d, Y" }}</span>{% endif %}</div>
+{% if goal.description %}<p style="font-size:0.8rem;color:var(--text-secondary);margin-top:8px">{{ goal.description|truncatewords:20 }}</p>{% endif %}
+<div class="item-footer"><a href="{% url 'goal_edit' goal.pk %}" class="btn btn-sm btn-secondary"><i class="fas fa-pen"></i> {{ t.edit }}</a> <a href="{% url 'goal_delete' goal.pk %}" class="btn btn-sm btn-secondary"><i class="fas fa-trash"></i> {{ t.delete }}</a></div>
+</div>{% endfor %}</div>
+{% else %}
+<div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-bullseye"></i><p>{{ t.no_goals_yet }}</p><a href="{% url 'goal_create' %}" class="btn btn-primary btn-sm">{{ t.create_goal }}</a></div></div></div>
+{% endif %}
+{% endblock %}

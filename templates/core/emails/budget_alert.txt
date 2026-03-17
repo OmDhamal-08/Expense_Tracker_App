@@ -1,0 +1,17 @@
+Hello {{ user.first_name|default:user.username }},
+
+This is an automated alert from your Expense Tracker.
+
+{% if alert_type == 'exceeded' %}
+You have EXCEEDED your budget for the category: "{{ budget.category.name }}".
+Budgeted amount: {{ budget.amount }}
+Total spent: {{ budget.spent }}
+Over by: {{ budget.spent|add:"-"|add:budget.amount }}
+{% else %}
+You are approaching your budget limit for the category: "{{ budget.category.name }}".
+Budgeted amount: {{ budget.amount }}
+Total spent: {{ budget.spent }} (80% or more)
+Remaining: {{ budget.amount|add:"-"|add:budget.spent }}
+{% endif %}
+
+Review your expenses to stay on track!
