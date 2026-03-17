@@ -15,4 +15,5 @@ gunicorn
 whitenoise
 dj-database-url
 psycopg2-binary
-xhtml2pdf
+python-bidi==0.4.2
+xhtml2pdf==0.2.16
