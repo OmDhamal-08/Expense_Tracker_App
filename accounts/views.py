@@ -58,7 +58,8 @@ def register_view(request):
                     user.is_active = True
                     user.email_verified = True
                 else:
-                    user.is_active = False
+                    user.is_active = True  # Changed from False to True so users can login immediately
+                    user.email_verified = False
                 user.save()
                 
                 if not settings.DEBUG:
@@ -142,13 +143,6 @@ def login_view(request):
             user = authenticate(request, email=email, password=password)
             
             if user is not None:
-                if not settings.DEBUG and not user.email_verified:
-                    messages.error(
-                        request,
-                        'Please verify your email address before logging in.'
-                    )
-                    return redirect('login')
-                
                 if not user.is_active:
                     messages.error(
                         request,
