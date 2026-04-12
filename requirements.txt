@@ -17,3 +17,5 @@ dj-database-url
 psycopg2-binary
 python-bidi==0.4.2
 xhtml2pdf==0.2.16
+django-apscheduler==0.6.2
+requests==2.31.0

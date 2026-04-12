@@ -1,0 +1,31 @@
+# Expense Tracker App – Technology Stack & Decisions
+
+This document outlines the core choices made for the Expense Tracker application, detailing why specific technologies and packages were utilized over alternative options. 
+
+## 1. Core Framework: Django (Python)
+- **Why chosen?** Django provides an entire "batteries-included" toolkit. It comes with an out-of-the-box admin panel, excellent ORM (Object-Relational Mapping), robust security models, and handles authentication securely.
+- **Alternatives considered:** Flask or FastAPI. While those are lighter, they would have required us to manually piece together a database integration, a templating engine (like Jinja), and our own security middleware, significantly increasing development time.
+
+## 2. API Layer: Django REST Framework (DRF)
+- **Why chosen?** DRF integrates seamlessly with Django models. It handles JSON serialization and provides extremely clean class-based views for API endpoints (like generating financial graphs or pulling JSON exports).
+- **Alternatives considered:** Django Ninja. Ninja is great for type-hints and speed, but DRF provides richer built-in tools for pagination, token-based authentication (SimpleJWT), and viewsets that reduce boilerplate code.
+
+## 3. Frontend & Styling: Django Templates + Bootstrap 5 + Crispy Forms
+- **Why chosen?** Leveraging Django’s templating rendering along with Bootstrap 5 allowed us to build out clean, responsive layouts quickly. `django-crispy-forms` and `crispy-bootstrap5` render form fields flawlessly without having to manually construct HTML for every input, label, and error validation.
+- **Alternatives considered:** React/Next.js or Vue.js as an SPA (Single Page Application). Using an SPA creates a heavy split between frontend and backend (requiring separate hosting, API bridges between everywhere, and CORS configuration). By keeping it monolithic (Templates + Bootstrap), the project remains lightweight and easy to maintain by a single developer.
+
+## 4. Production Static Files: WhiteNoise
+- **Why chosen?** WhiteNoise allows Django to serve its own static files (CSS, JS, Images) efficiently in production. 
+- **Alternatives considered:** NGINX or AWS S3. NGINX requires complex setup, and S3 requires creating AWS accounts and managing buckets. WhiteNoise is a nearly zero-configuration tool perfect for simple PaaS platforms like Render or Heroku.
+
+## 5. Web Server: Gunicorn
+- **Why chosen?** Django’s built-in `manage.py runserver` is single-threaded and insecure for production. Gunicorn is a battle-tested WSGI server that spawns multiple concurrent workers to handle heavy traffic.
+- **Alternatives considered:** uWSGI. uWSGI is powerful but frequently requires complex `.ini` configurations. Gunicorn is straightforward and highly reliable with containerized platforms.
+
+## 6. Background Processes / Keep-Alive: APScheduler & Requests
+- **Why chosen?** For keeping the Render free instance awake (and handling recurring expenses natively), `django-apscheduler` and basic threading with `requests` was utilized. It allows periodic jobs directly inside the Django app.
+- **Alternatives considered:** Celery & Redis. Celery is the industry standard for background tasks, but it requires starting a separate Redis message queue container and a Celery worker container. This would have exceeded free-tier limits on most hosting providers. In-memory threading/APScheduler is lighter and completely free. 
+
+## 7. Database Handling: Python-Decouple & dj-database-url
+- **Why chosen?** Secures secrets inside a `.env` file instead of hard-coding them. `dj-database-url` parses standard remote URL strings (e.g., from Render databases) and translates them into Django dictionaries smoothly.
+- **Technology Choice:** SQLite for local development (requires zero setup). PostgreSQL for production. Both are natively handled by `dj-database-url`.
