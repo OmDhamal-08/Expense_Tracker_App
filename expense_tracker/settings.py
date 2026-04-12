@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -153,6 +154,23 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 ACCOUNT_SESSION_REMEMBER = True
+
+# Social Account Config
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        # You can either set the app credentials in Django Admin (Social Apps)
+        # OR define them hereafter fetching from .env
+    }
+}
+# Automatically extract required info (like email) from Google but prompt if anything else is missing
+SOCIALACCOUNT_AUTO_SIGNUP = True
 
 # Email Configuration — set EMAIL_BACKEND in .env to switch to SMTP
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')

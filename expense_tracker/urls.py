@@ -7,6 +7,7 @@ from accounts.views import home
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
+    path('auth/', include('allauth.urls')),
     path('accounts/', include('accounts.urls')),
     path('', include('core.urls')),
     path('api/', include('api.urls', namespace='api')),

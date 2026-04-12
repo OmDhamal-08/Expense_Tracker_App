@@ -19,3 +19,8 @@ python-bidi==0.4.2
 xhtml2pdf==0.2.16
 django-apscheduler==0.6.2
 requests==2.31.0
+django-taggit==6.1.0
+django-otp==1.5.4
+qrcode==8.0
+drf-spectacular==0.28.0
+django-ratelimit==4.1.0
