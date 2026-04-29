@@ -25,3 +25,4 @@ qrcode==8.0
 drf-spectacular==0.28.0
 django-ratelimit==4.1.0
 python-dateutil==2.9.0
+django-simple-history==3.7.0
