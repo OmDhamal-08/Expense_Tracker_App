@@ -57,6 +57,10 @@
                 </a>
 
                 <div class="nav-section">{{ t.insights }}</div>
+                <a href="{% url 'insights' %}"
+                    class="{% if request.resolver_match.url_name == 'insights' %}active{% endif %}">
+                    <i class="fas fa-robot"></i> AI Insights
+                </a>
                 <a href="{% url 'reports' %}"
                     class="{% if 'report' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-chart-bar"></i> {{ t.reports }}

@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}AI Insights - Expense Tracker{% endblock %}
+{% block page_title %}AI Insights{% endblock %}
+
+{% block extra_css %}
+<style>
+.insights-container { max-width: 800px; margin: 0 auto; }
+
+.insights-header {
+    text-align: center;
+    padding: 30px 20px 20px;
+}
+.insights-header h2 {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.insights-header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.generate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(247, 37, 133, 0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 16px;
+}
+.generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(247, 37, 133, 0.5);
+}
+.generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+.generate-btn .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+.generate-btn.loading .spinner { display: inline-block; }
+.generate-btn.loading .btn-text { display: none; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Results card */
+.insights-result {
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border-color, #eee);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-top: 24px;
+    line-height: 1.7;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.insights-result h2 {
+    font-size: 1.2rem;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    color: var(--accent, #7209b7);
+    border-bottom: 1px solid var(--border-color, #eee);
+    padding-bottom: 4px;
+}
+.insights-result h2:first-child { margin-top: 0; }
+.insights-result ul { padding-left: 20px; margin: 8px 0; }
+.insights-result li { margin-bottom: 6px; }
+.insights-result strong { color: var(--text-primary); }
+
+.error-msg {
+    background: #fff0f0;
+    border: 1px solid #ffc0c0;
+    color: #c00;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+[data-theme="dark"] .error-msg {
+    background: #2a1515;
+    border-color: #5c2020;
+    color: #ff8080;
+}
+
+.powered-by {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 16px;
+    opacity: 0.7;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="insights-container">
+    <div class="insights-header">
+        <h2><i class="fas fa-robot"></i> AI-Powered Financial Insights</h2>
+        <p>Get personalized spending analysis, savings tips, and budget recommendations powered by Google Gemini AI.</p>
+        <button class="generate-btn" id="generateBtn" onclick="generateInsights()">
+            <span class="btn-text"><i class="fas fa-magic"></i> Generate My Insights</span>
+            <span class="spinner"></span>
+            <span class="loading-text" style="display:none">Analyzing your data...</span>
+        </button>
+    </div>
+
+    <div id="insightsResult"></div>
+    <div class="powered-by" id="poweredBy" style="display:none">Powered by Google Gemini AI</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+async function generateInsights() {
+    const btn = document.getElementById('generateBtn');
+    const result = document.getElementById('insightsResult');
+    const poweredBy = document.getElementById('poweredBy');
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+    btn.querySelector('.loading-text').style.display = 'inline';
+    result.innerHTML = '';
+    poweredBy.style.display = 'none';
+
+    try {
+        const resp = await fetch("{% url 'insights_api' %}", {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await resp.json();
+
+        if (data.error) {
+            result.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> ' + data.error + '</div>';
+        } else {
+            result.innerHTML = '<div class="insights-result">' + marked.parse(data.insights) + '</div>';
+            poweredBy.style.display = 'block';
+        }
+    } catch (err) {
+        result.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Network error. Please try again.</div>';
+    }
+
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    btn.querySelector('.loading-text').style.display = 'none';
+}
+</script>
+{% endblock %}

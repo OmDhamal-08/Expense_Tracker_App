@@ -185,6 +185,32 @@ def login_view(request):
     
     return render(request, 'accounts/login.html', {'form': form})
 
+def demo_login(request):
+    """
+    One-click demo login.
+    Finds the pre-seeded demo user and logs them in instantly.
+    If the demo account doesn't exist yet, seeds it first.
+    """
+    from django.core.management import call_command
+
+    DEMO_EMAIL    = "demo@expensetracker.com"
+    DEMO_PASSWORD = "Demo@1234"
+
+    try:
+        user = User.objects.get(email=DEMO_EMAIL)
+    except User.DoesNotExist:
+        # Auto-seed if never run before (e.g. fresh Render deploy)
+        call_command("seed_demo")
+        user = User.objects.get(email=DEMO_EMAIL)
+
+    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    messages.info(
+        request,
+        "👋 Welcome to the demo! You're exploring a pre-filled account with 6 months of sample data."
+    )
+    return redirect("dashboard")
+
+
 def logout_view(request):
     """Custom logout view."""
     if request.user.is_authenticated:

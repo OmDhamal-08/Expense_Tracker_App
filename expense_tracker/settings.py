@@ -165,8 +165,11 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         },
-        # You can either set the app credentials in Django Admin (Social Apps)
-        # OR define them hereafter fetching from .env
+        'APP': {
+            'client_id': config('GOOGLE_CLIENT_ID', default=''),
+            'secret': config('GOOGLE_CLIENT_SECRET', default=''),
+            'key': ''
+        }
     }
 }
 # Automatically extract required info (like email) from Google but prompt if anything else is missing
@@ -316,3 +319,6 @@ RATELIMIT_USE_CACHE = 'default'
 
 # ── 2FA Settings ──────────────────────────────────────────────────────────────
 OTP_TOTP_ISSUER = 'ExpenseTracker'
+
+# ── Gemini AI ─────────────────────────────────────────────────────────────────
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')

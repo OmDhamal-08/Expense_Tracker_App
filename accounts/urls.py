@@ -8,6 +8,7 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('demo-login/', views.demo_login, name='demo_login'),  # One-click demo
     
     # Email verification
     path('verify-email/<uidb64>/<token>/', views.verify_email, name='verify_email'),

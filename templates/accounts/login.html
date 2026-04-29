@@ -26,5 +26,19 @@
 <a href="{% url 'password_reset' %}">{{ t.forgot_password|default:'Forgot password?' }}</a>
 <span style="margin:0 8px;color:var(--text-secondary)">|</span>
 <a href="{% url 'register' %}">{{ t.create_account|default:'Create account' }}</a>
+</div>
+<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border-color,#eee);text-align:center">
+  <a href="{% url 'demo_login' %}"
+     style="display:inline-flex;align-items:center;gap:8px;
+            padding:10px 24px;border-radius:8px;font-weight:600;font-size:0.9rem;
+            background:linear-gradient(135deg,#f72585,#7209b7);
+            color:#fff;text-decoration:none;
+            box-shadow:0 4px 15px rgba(247,37,133,0.3);
+            transition:transform 0.2s,box-shadow 0.2s"
+     onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(247,37,133,0.5)'"
+     onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 15px rgba(247,37,133,0.3)'">
+    <i class="fas fa-play-circle"></i> Try Demo — No Sign Up Needed
+  </a>
+  <p style="font-size:0.72rem;color:var(--text-secondary);margin:6px 0 0">Pre-filled with 6 months of sample data</p>
 </div></div></div>
 {% endblock %}

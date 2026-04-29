@@ -94,7 +94,7 @@ class Expense(models.Model):
         max_digits=12, decimal_places=2,
         validators=[MinValueValidator(0.01)]
     )
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.now, db_index=True)
     time = models.TimeField(null=True, blank=True)
     category = models.ForeignKey(
         Category,
@@ -123,6 +123,10 @@ class Expense(models.Model):
 
     class Meta:
         ordering = ['-date', '-created_at']
+        indexes = [
+            models.Index(fields=['user', 'date']),
+            models.Index(fields=['user', 'category']),
+        ]
 
     def __str__(self):
         return f"{self.description or self.category} - {self.amount}"
@@ -146,7 +150,7 @@ class Income(models.Model):
         max_digits=12, decimal_places=2,
         validators=[MinValueValidator(0.01)]
     )
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.now, db_index=True)
     source = models.CharField(max_length=255, blank=True)
     category = models.ForeignKey(
         Category,

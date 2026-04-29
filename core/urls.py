@@ -1,8 +1,13 @@
 from django.urls import path
 from . import views
+from .insights import insights_view, insights_api
 
 urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
+
+    # AI Insights
+    path('insights/', insights_view, name='insights'),
+    path('insights/api/', insights_api, name='insights_api'),
 
     # Categories
     path('categories/', views.category_list, name='category_list'),
