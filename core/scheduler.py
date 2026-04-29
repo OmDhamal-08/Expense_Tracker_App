@@ -12,6 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django_apscheduler.jobstores import DjangoJobStore
 from django.core.management import call_command
+from django.db.utils import OperationalError, ProgrammingError
 
 logger = logging.getLogger(__name__)
 
@@ -36,23 +37,26 @@ def start():
     scheduler = BackgroundScheduler(timezone="UTC")
     scheduler.add_jobstore(DjangoJobStore(), "default")
 
-    # ── Job 1: Process Recurring Transactions ─────────────────────────────────
-    scheduler.add_job(
-        process_recurring_job,
-        trigger=CronTrigger(hour=0, minute=1),   # daily at 00:01 UTC
-        id="process_recurring",
-        name="Process Recurring Transactions",
-        replace_existing=True,
-    )
+    try:
+        # ── Job 1: Process Recurring Transactions ─────────────────────────────────
+        scheduler.add_job(
+            process_recurring_job,
+            trigger=CronTrigger(hour=0, minute=1),   # daily at 00:01 UTC
+            id="process_recurring",
+            name="Process Recurring Transactions",
+            replace_existing=True,
+        )
 
-    # ── Job 2: Weekly Summary Email ────────────────────────────────────────────
-    scheduler.add_job(
-        send_summary_email_job,
-        trigger=CronTrigger(day_of_week="mon", hour=8, minute=0),  # Monday 08:00 UTC
-        id="send_summary_email",
-        name="Send Weekly Summary Email",
-        replace_existing=True,
-    )
+        # ── Job 2: Weekly Summary Email ────────────────────────────────────────────
+        scheduler.add_job(
+            send_summary_email_job,
+            trigger=CronTrigger(day_of_week="mon", hour=8, minute=0),  # Monday 08:00 UTC
+            id="send_summary_email",
+            name="Send Weekly Summary Email",
+            replace_existing=True,
+        )
 
-    logger.info("APScheduler started — recurring & email jobs registered.")
-    scheduler.start()
+        logger.info("APScheduler started — recurring & email jobs registered.")
+        scheduler.start()
+    except (OperationalError, ProgrammingError) as e:
+        logger.warning(f"Exception while starting APScheduler (likely unapplied migrations): {e}")
