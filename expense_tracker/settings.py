@@ -175,6 +175,9 @@ SOCIALACCOUNT_PROVIDERS = {
 # Automatically extract required info (like email) from Google but prompt if anything else is missing
 SOCIALACCOUNT_AUTO_SIGNUP = True
 
+# Bypass the intermediate "Are you sure you want to sign in?" page
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
 # Email Configuration — set EMAIL_BACKEND in .env to switch to SMTP
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
