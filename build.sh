@@ -11,6 +11,9 @@ python manage.py migrate
 # Seed predefined categories + payment methods (safe to run multiple times)
 python manage.py seed_defaults
 
+# Activate any user accounts stuck as inactive from previous failed social signups
+python manage.py shell -c "from accounts.models import User; count = User.objects.filter(is_active=False).update(is_active=True); print(f'Activated {count} inactive user(s).')"
+
 # Automatically create a superuser if environment variables are set
 if [[ -n "${DJANGO_SUPERUSER_USERNAME}" && -n "${DJANGO_SUPERUSER_PASSWORD}" && -n "${DJANGO_SUPERUSER_EMAIL}" ]]; then
   python manage.py createsuperuser --noinput || true
