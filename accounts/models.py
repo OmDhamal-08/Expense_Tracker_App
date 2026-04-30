@@ -96,8 +96,6 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name}".strip() or self.email
     
     def save(self, *args, **kwargs):
-        # Set username to email for compatibility
-        self.username = self.email
         super().save(*args, **kwargs)
 
 class UserSession(models.Model):

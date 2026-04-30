@@ -151,6 +151,7 @@ SITE_ID = 1
 # Allauth Configuration (Simple and working)
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None   # Our User model has no username
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 ACCOUNT_SESSION_REMEMBER = True
