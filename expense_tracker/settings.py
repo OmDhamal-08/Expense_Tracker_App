@@ -152,6 +152,7 @@ SITE_ID = 1
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None   # Our User model has no username
+ACCOUNT_EMAIL_VERIFICATION = 'none'       # Don't require email verification (Google already verifies)
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 ACCOUNT_SESSION_REMEMBER = True
