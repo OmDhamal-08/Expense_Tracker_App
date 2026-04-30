@@ -179,6 +179,17 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 # Bypass the intermediate "Are you sure you want to sign in?" page
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
+# Auto-connect social login to existing account with the same email
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+
+# Trust the email Google gives us (it's already verified by Google)
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+
+# Custom adapters for our no-username User model
+ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
+
 # Email Configuration — set EMAIL_BACKEND in .env to switch to SMTP
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
