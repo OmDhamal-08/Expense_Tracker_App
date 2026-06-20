@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from .models import User
 from crispy_forms.helper import FormHelper
@@ -35,15 +35,15 @@ class CustomUserCreationForm(UserCreationForm):
             raise forms.ValidationError("A user with this email already exists.")
         return email
 
-class CustomUserChangeForm(UserChangeForm):
-    """Form for updating users."""
+class CustomUserChangeForm(forms.ModelForm):
+    """Form for updating the profile fields shown on the profile page."""
     
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'currency', 'timezone', 
-                 'language', 'theme', 'profile_picture', 'phone_number', 
-                 'address', 'date_of_birth', 'email_notifications', 
-                 'sms_notifications', 'budget_alerts', 'bill_reminders')
+        fields = (
+            'first_name', 'last_name', 'currency', 'language', 'theme',
+            'profile_picture', 'phone_number', 'address', 'date_of_birth',
+        )
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,9 +51,6 @@ class CustomUserChangeForm(UserChangeForm):
         self.helper.form_method = 'post'
         self.helper.form_enctype = 'multipart/form-data'
         
-        # Remove password field from form
-        self.fields.pop('password', None)
-
 class LoginForm(forms.Form):
     """Login form."""
     email = forms.EmailField(
