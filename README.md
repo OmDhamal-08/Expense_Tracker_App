@@ -1,255 +1,217 @@
-# 💰 Expense Tracker — Full-Stack Django Finance App
+# Expense Tracker App
 
-A **production-grade personal finance management application** built with Django 6, featuring AI-powered insights, a full REST API, and a modern dashboard with real-time analytics.
+A full-stack Django personal finance application for tracking income, expenses, budgets, goals, reports, and AI-powered financial insights.
 
-[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://python.org)
-[![Django 6](https://img.shields.io/badge/Django-6.x-092E20?logo=django&logoColor=white)](https://djangoproject.com)
-[![DRF](https://img.shields.io/badge/REST_API-DRF-FF6F61?logo=django&logoColor=white)](https://django-rest-framework.org)
-[![Gemini AI](https://img.shields.io/badge/AI-Gemini_2.0-4285F4?logo=google&logoColor=white)](https://ai.google.dev)
-[![Tests](https://img.shields.io/badge/Tests-56_passing-2DC653?logo=pytest&logoColor=white)](#-testing)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+The app includes a server-rendered dashboard, secure authentication, REST APIs, export tools, multi-language support, and deployment-ready configuration for Render.
 
----
+## Features
 
-## 🚀 Live Demo
+- Dashboard with monthly income, expenses, balance, recent transactions, and charts
+- Expense and income tracking with categories, payment methods, tags, receipts, and recurring entries
+- Budget management with progress tracking and alert thresholds
+- Financial goals with progress calculation and milestone notifications
+- Reports with category breakdowns, budget comparisons, and export options
+- AI insights powered by Google Gemini
+- Authentication with email login, Google OAuth, password reset, and TOTP-based 2FA
+- REST API with JWT authentication and Swagger/OpenAPI documentation
+- Data export as CSV, JSON, and PDF
+- Dark mode, keyboard shortcuts, onboarding, and multi-language UI support
 
-> **Try instantly — no sign-up required!**
->
-> Click **"Try Demo"** on the home page or visit `/accounts/demo-login/`
->
-> Pre-filled with **6 months of realistic financial data** (194 expenses, 12 income records, 6 budgets, 3 goals).
->
-> **Demo credentials:** `demo@expensetracker.com / Demo@1234`
+## Tech Stack
 
----
+| Area | Technology |
+| --- | --- |
+| Backend | Python 3.12, Django 6 |
+| API | Django REST Framework, SimpleJWT, drf-spectacular |
+| Database | SQLite for development, PostgreSQL for production |
+| Authentication | django-allauth, django-otp, django-ratelimit |
+| Frontend | Django templates, CSS, Chart.js, Font Awesome |
+| AI | Google Gemini API |
+| Background jobs | django-apscheduler |
+| Deployment | Gunicorn, WhiteNoise, Render |
 
-## ✨ Key Features
+## Project Structure
 
-### Core Financial Management
-| Feature | Description |
-|---------|-------------|
-| 📊 **Smart Dashboard** | Real-time income/expense/savings overview with 6-month trend charts |
-| 💸 **Expense & Income Tracking** | Categories, tags, payment methods, receipt uploads, location |
-| 📅 **Recurring Transactions** | Auto-generate daily/weekly/monthly/yearly entries |
-| 🎯 **Financial Goals** | Track savings, debt repayment & investments with progress bars |
-| 📈 **Reports & Analytics** | 12-month charts, category breakdowns, savings rate |
-
-### AI & Intelligence
-| Feature | Description |
-|---------|-------------|
-| 🤖 **AI Insights (Gemini)** | Personalized spending analysis, savings tips & risk alerts powered by Google Gemini AI |
-| 🔔 **Smart Notifications** | Automatic budget warnings & goal milestone alerts |
-| 📊 **Budget vs Actual** | Visual comparison of budgeted vs actual spending |
-
-### Security & API
-| Feature | Description |
-|---------|-------------|
-| 🔐 **2FA Authentication** | TOTP via Google Authenticator |
-| 🌐 **Full REST API** | 20+ endpoints with JWT auth & Swagger docs |
-| 🛡️ **Rate Limiting** | Brute-force protection on auth endpoints |
-| 📤 **Data Export** | CSV, JSON & PDF export |
-
-### UX Polish
-| Feature | Description |
-|---------|-------------|
-| 🌙 **Dark Mode** | Server-persisted theme |
-| ⌨️ **Keyboard Shortcuts** | `n` = new expense, `d` = dashboard, `/` = search |
-| ⚡ **AJAX Quick-Add** | Add expenses without page navigation |
-| 🌍 **Multi-language** | English, Hindi, Marathi |
-| 🔑 **Google OAuth** | One-click social login |
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Backend** | Django 6, Python 3.12 |
-| **Database** | SQLite (dev) / PostgreSQL (prod) |
-| **AI** | Google Gemini 2.0 Flash API |
-| **Auth** | django-allauth, django-otp (2FA), JWT (SimpleJWT) |
-| **API** | Django REST Framework, drf-spectacular (OpenAPI/Swagger) |
-| **Frontend** | Bootstrap 5, Chart.js, Font Awesome, marked.js |
-| **Deployment** | Gunicorn, WhiteNoise, Render |
-| **DevOps** | Docker Compose, GitHub Actions |
-
----
-
-## 📁 Project Structure
-
-```
-expense-tracker/
-├── accounts/                  # Auth, profiles, 2FA, sessions, Google OAuth
-├── core/                      # Expenses, income, budgets, goals, reports
-│   ├── insights.py            # Gemini AI integration
-│   ├── management/commands/
-│   │   └── seed_demo.py       # Demo data seeder (194 expenses, 6 months)
-│   └── tests/                 # 56 unit & integration tests
-│       ├── test_models.py     # Model tests (Budget logic, Goal %, etc.)
-│       └── test_views.py      # View tests (CRUD, auth, exports, etc.)
-├── api/                       # REST API (DRF) — serializers, views, routes
-│   └── views/                 # Modular API views (auth, transactions, etc.)
-├── expense_tracker/           # Settings, root URLs
-├── templates/                 # Django templates
-├── static/                    # CSS, JS
-├── requirements.txt
-├── Procfile                   # Gunicorn (Render/Heroku)
-└── docker-compose.yml         # Local PostgreSQL + pgAdmin
+```text
+Expense_Tracker_App/
+|-- accounts/           # Authentication, profile, sessions, 2FA, exports
+|-- api/                # REST API serializers, routes, and views
+|-- core/               # Expenses, income, budgets, goals, reports, notifications
+|-- expense_tracker/    # Django settings, root URLs, ASGI/WSGI
+|-- static/             # Static assets
+|-- templates/          # Django templates
+|-- manage.py
+|-- requirements.txt
+|-- docker-compose.yml
+|-- Procfile
+`-- build.sh
 ```
 
----
-
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
+
 - Python 3.12+
 - Git
+- PostgreSQL optional for production-like local setup
 
-### Setup
+### Installation
 
 ```bash
-# 1. Clone
 git clone https://github.com/OmDhamal-08/Expense_Tracker_App.git
 cd Expense_Tracker_App
 
-# 2. Virtual environment
-python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # macOS/Linux
+python -m venv .venv
+.venv\Scripts\activate
 
-# 3. Install dependencies
 pip install -r requirements.txt
+copy .env.example .env
 
-# 4. Configure environment
-cp .env.example .env         # Edit with your keys
-
-# 5. Migrate & seed
 python manage.py migrate
-python manage.py seed_demo   # Creates demo user with 6 months of data
-
-# 6. Run
+python manage.py seed_demo
 python manage.py runserver
 ```
 
-Visit **http://127.0.0.1:8000** and click **"Try Demo"** 🎉
+For macOS/Linux, activate the environment with:
 
-### Environment Variables
+```bash
+source .venv/bin/activate
+```
+
+Open the app at:
+
+```text
+http://127.0.0.1:8000/
+```
+
+## Demo Account
+
+After running `python manage.py seed_demo`, use:
+
+```text
+Email: demo@expensetracker.com
+Password: Demo@1234
+```
+
+You can also use the demo login route:
+
+```text
+/accounts/demo-login/
+```
+
+## Environment Variables
+
+Create a `.env` file from `.env.example` and update the values for your environment.
 
 ```env
 SECRET_KEY=your-secret-key
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
-GEMINI_API_KEY=your-gemini-api-key     # For AI Insights
-GOOGLE_CLIENT_ID=                       # For Google OAuth
-GOOGLE_CLIENT_SECRET=
+DATABASE_URL=sqlite:///db.sqlite3
+GEMINI_API_KEY=your-gemini-api-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
 ```
 
----
-
-## 🌐 REST API
-
-Swagger UI: **`/api/schema/swagger-ui/`** (auto-generated from code)
-
-### Authentication
+## Useful Commands
 
 ```bash
-# Register
-POST /api/auth/register/    { email, password, password2 }
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py seed_demo
+python manage.py seed_demo --reset
+python manage.py process_recurring
+python manage.py send_summary_email
+python manage.py test
+```
 
-# Login → JWT tokens
-POST /api/auth/login/       { email, password }
+## REST API
 
-# All requests:
+Swagger documentation is available at:
+
+```text
+/api/schema/swagger-ui/
+```
+
+Main API routes include:
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/auth/register/` | Register a user |
+| POST | `/api/auth/login/` | Log in and receive JWT tokens |
+| POST | `/api/auth/refresh/` | Refresh JWT access token |
+| GET/POST | `/api/expenses/` | List or create expenses |
+| GET/POST | `/api/income/` | List or create income |
+| GET/POST | `/api/categories/` | List or create categories |
+| GET/POST | `/api/payment-methods/` | List or create payment methods |
+| GET/POST | `/api/budgets/` | List or create budgets |
+| GET/POST | `/api/goals/` | List or create financial goals |
+| GET | `/api/dashboard/` | Dashboard summary |
+| GET | `/api/stats/monthly/` | Monthly analytics |
+| GET | `/api/export/csv/` | Export CSV |
+| GET | `/api/export/json/` | Export JSON |
+| GET | `/api/export/pdf/` | Export PDF |
+
+Authenticated API requests should include:
+
+```text
 Authorization: Bearer <access_token>
 ```
 
-### Endpoints
+## Testing
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET/POST` | `/api/expenses/` | List / create expenses |
-| `GET/PUT/DELETE` | `/api/expenses/<id>/` | Retrieve / update / delete |
-| `GET/POST` | `/api/income/` | List / create income |
-| `GET/POST` | `/api/budgets/` | List / create budgets |
-| `GET/POST` | `/api/goals/` | List / create goals |
-| `GET` | `/api/dashboard/` | Dashboard summary |
-| `GET` | `/api/stats/monthly/` | Monthly chart data |
-| `GET` | `/api/export/csv/` | Export as CSV |
-| `GET` | `/api/export/pdf/` | Export as PDF |
-| `GET` | `/api/export/json/` | Export as JSON |
-
----
-
-## 🧪 Testing
+Run the full test suite:
 
 ```bash
-python manage.py test core.tests --verbosity=2
-
-# 56 tests covering:
-# - 22 unit tests (models: Budget %, Goal progress, Category constraints)
-# - 34 integration tests (views: CRUD, auth guards, exports, bulk ops)
+python manage.py test
 ```
 
-**What's tested:**
-- ✅ All model properties (spent_percentage, is_over_budget, progress_percentage)
-- ✅ Auth guards (anonymous users redirected on all 7 protected routes)
-- ✅ Full CRUD lifecycle (create → edit → delete) for expenses, income, budgets, goals
-- ✅ Cross-user data isolation (user A can't edit user B's expenses)
-- ✅ Bulk delete operations
-- ✅ Search & filter functionality
-- ✅ CSV/JSON export responses
-- ✅ Notification read/clear workflows
-- ✅ Goal completion triggers notification
-
----
-
-## 🏗️ Management Commands
+Run focused tests:
 
 ```bash
-python manage.py seed_demo              # Seed demo user with sample data
-python manage.py seed_demo --reset      # Wipe & re-seed demo data
-python manage.py process_recurring      # Auto-generate recurring txns (cron)
-python manage.py send_summary_email     # Weekly email summaries
+python manage.py test core.tests
+python manage.py test accounts.tests
 ```
 
----
+## Deployment
 
-## ☁️ Deployment (Render)
+The project includes files commonly used for Render deployment:
 
-1. Push to GitHub
-2. Create **Web Service** on Render → connect repo
-3. **Build Command:**
-   ```
-   pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --no-input && python manage.py seed_demo
-   ```
-4. **Start Command:** `gunicorn expense_tracker.wsgi:application`
-5. Add PostgreSQL database from Render dashboard
-6. Set environment variables:
+- `build.sh`
+- `Procfile`
+- `requirements.txt`
+- WhiteNoise static file configuration
+- `DATABASE_URL` support through `dj-database-url`
 
-| Variable | Value |
-|----------|-------|
-| `SECRET_KEY` | Long random string |
-| `DEBUG` | `False` |
-| `DATABASE_URL` | Render PostgreSQL URL |
-| `ALLOWED_HOSTS` | `yourapp.onrender.com` |
-| `GEMINI_API_KEY` | Your Gemini API key |
+Typical Render settings:
 
----
+```text
+Build Command:
+pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --no-input
 
-## 📄 License
+Start Command:
+gunicorn expense_tracker.wsgi:application
+```
 
-MIT License — see [LICENSE](LICENSE)
+Recommended production environment variables:
 
----
+```env
+SECRET_KEY=your-production-secret-key
+DEBUG=False
+DATABASE_URL=your-render-postgres-url
+ALLOWED_HOSTS=your-app.onrender.com
+GEMINI_API_KEY=your-gemini-api-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
 
-## 👤 Author
+## Repository Description
 
-**Om Dhamal**
+Django personal finance tracker with dashboards, budgeting, goals, REST APIs, exports, authentication, multi-language support, and AI-powered insights.
 
-[![GitHub](https://img.shields.io/badge/GitHub-@OmDhamal--08-181717?logo=github)](https://github.com/OmDhamal-08)
+## Author
 
-📧 Contact via GitHub
+Om Dhamal
 
----
-
-> 📖 For deep technical details and interview prep, see [`INTERVIEW_PREPARATION.md`](./INTERVIEW_PREPARATION.md)
+GitHub: https://github.com/OmDhamal-08
